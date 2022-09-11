@@ -1,0 +1,24 @@
+{
+  "name": "express-mesto",
+  "version": "1.0.0",
+  "description": "mesto backend",
+  "main": "./src/app.js",
+  "scripts": {
+    "lint": "npx eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/temirlanmur/express-mesto-gha.git"
+  },
+  "author": "Temirlan Murzagaliyev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/temirlanmur/express-mesto-gha/issues"
+  },
+  "homepage": "https://github.com/temirlanmur/express-mesto-gha#readme",
+  "devDependencies": {
+    "eslint": "^8.23.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0"
+  }
+}
