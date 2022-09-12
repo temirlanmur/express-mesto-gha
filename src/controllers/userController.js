@@ -1,33 +1,32 @@
 const User = require('../models/userModel');
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.send({
-      data: users,
-    }));
-};
+async function getUsers(req, res) {
+  const users = await User.find({});
 
-const getUser = (req, res) => {
+  res.send({ data: users });
+}
+
+async function getUser(req, res) {
   const { userId } = req.params;
-  User.find({ _id: userId })
-    .then((user) => res.send({
-      data: user,
-    }));
-};
 
-const createUser = (req, res) => {
+  const user = await User.find({ _id: userId });
+
+  res.send({ data: user });
+}
+
+async function createUser(req, res) {
   const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => res.send({
-      data: user,
-    }));
-};
 
-const updateUser = (req, res) => {
+  const user = await User.create({ name, about, avatar });
+
+  res.send({ data: user });
+}
+
+async function updateProfile(req, res) {
   const { name, about } = req.body;
   const userId = req.user._id;
 
-  User.findByIdAndUpdate(
+  const updatedProfile = await User.findByIdAndUpdate(
     userId,
     { name, about },
     {
@@ -35,17 +34,16 @@ const updateUser = (req, res) => {
       runValidators: true,
       upsert: true,
     },
-  )
-    .then((user) => res.send({
-      data: user,
-    }));
-};
+  );
 
-const updateUserAvatar = (req, res) => {
+  res.send({ data: updatedProfile });
+}
+
+async function updateProfileAvatar(req, res) {
   const { avatar } = req.body;
   const userId = req.user._id;
 
-  User.findByIdAndUpdate(
+  const updatedProfile = await User.findByIdAndUpdate(
     userId,
     { avatar },
     {
@@ -53,16 +51,15 @@ const updateUserAvatar = (req, res) => {
       runValidators: true,
       upsert: true,
     },
-  )
-    .then((user) => res.send({
-      data: user,
-    }));
-};
+  );
+
+  res.send({ data: updatedProfile });
+}
 
 module.exports = {
   getUser,
   getUsers,
   createUser,
-  updateUser,
-  updateUserAvatar,
+  updateProfile,
+  updateProfileAvatar,
 };
