@@ -1,32 +1,33 @@
 const User = require('../models/userModel');
 
-async function getUsers(req, res) {
-  const users = await User.find({});
+const getUsers = (req, res) => {
+  User.find({})
+    .then((users) => res.send({
+      data: users,
+    }));
+};
 
-  res.send({ data: users });
-}
-
-async function getUser(req, res) {
+const getUser = (req, res) => {
   const { userId } = req.params;
+  User.find({ _id: userId })
+    .then((user) => res.send({
+      data: user,
+    }));
+};
 
-  const user = await User.find({ _id: userId });
-
-  res.send({ data: user });
-}
-
-async function createUser(req, res) {
+const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
+  User.create({ name, about, avatar })
+    .then((user) => res.send({
+      data: user,
+    }));
+};
 
-  const user = await User.create({ name, about, avatar });
-
-  res.send({ data: user });
-}
-
-async function updateProfile(req, res) {
+const updateUser = (req, res) => {
   const { name, about } = req.body;
   const userId = req.user._id;
 
-  const updatedProfile = await User.findByIdAndUpdate(
+  User.findByIdAndUpdate(
     userId,
     { name, about },
     {
@@ -34,16 +35,17 @@ async function updateProfile(req, res) {
       runValidators: true,
       upsert: true,
     },
-  );
+  )
+    .then((user) => res.send({
+      data: user,
+    }));
+};
 
-  res.send({ data: updatedProfile });
-}
-
-async function updateProfileAvatar(req, res) {
+const updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   const userId = req.user._id;
 
-  const updatedProfile = await User.findByIdAndUpdate(
+  User.findByIdAndUpdate(
     userId,
     { avatar },
     {
@@ -51,15 +53,16 @@ async function updateProfileAvatar(req, res) {
       runValidators: true,
       upsert: true,
     },
-  );
-
-  res.send({ data: updatedProfile });
-}
+  )
+    .then((user) => res.send({
+      data: user,
+    }));
+};
 
 module.exports = {
   getUser,
   getUsers,
   createUser,
-  updateProfile,
-  updateProfileAvatar,
+  updateUser,
+  updateUserAvatar,
 };

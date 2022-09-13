@@ -1,53 +1,57 @@
 const Card = require('../models/cardModel');
 
-async function getCards(req, res) {
-  const card = await Card.find({});
+const getCards = (req, res) => {
+  Card.find({})
+    .then((cards) => res.send({
+      data: cards,
+    }));
+};
 
-  res.send({ data: card });
-}
-
-async function createCard(req, res) {
+const createCard = (req, res) => {
   const { name, link } = req.body;
   const ownerId = req.user._id;
 
-  const card = await Card.create({ name, link, owner: ownerId });
+  Card.create({ name, link, owner: ownerId })
+    .then((card) => res.send({
+      data: card,
+    }));
+};
 
-  res.send({ data: card });
-}
-
-async function deleteCard(req, res) {
+const deleteCard = (req, res) => {
   const { cardId } = req.params;
+  Card.findByIdAndRemove(cardId)
+    .then((card) => res.send({
+      data: card,
+    }));
+};
 
-  const card = await Card.findByIdAndRemove(cardId);
-
-  res.send({ data: card });
-}
-
-async function likeCard(req, res) {
+const likeCard = (req, res) => {
   const { cardId } = req.params;
   const userId = req.user._id;
 
-  const card = await Card.findByIdAndUpdate(
+  Card.findByIdAndUpdate(
     cardId,
     { $addToSet: { likes: userId } },
     { new: true },
-  );
+  )
+    .then((card) => res.send({
+      data: card,
+    }));
+};
 
-  res.send({ data: card });
-}
-
-async function dislikeCard(req, res) {
+const dislikeCard = (req, res) => {
   const { cardId } = req.params;
   const userId = req.user._id;
 
-  const card = await Card.findByIdAndUpdate(
+  Card.findByIdAndUpdate(
     cardId,
     { $pull: { likes: userId } },
     { new: true },
-  );
-
-  res.send({ data: card });
-}
+  )
+    .then((card) => res.send({
+      data: card,
+    }));
+};
 
 module.exports = {
   getCards,
