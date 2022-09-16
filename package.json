@@ -2,9 +2,9 @@
   "name": "express-mesto",
   "version": "1.0.0",
   "description": "mesto backend",
-  "main": "./src/app.js",
+  "main": "app.js",
   "scripts": {
-    "start": "nodemon src/app.js",
+    "start": "nodemon app.js",
     "lint": "npx eslint ."
   },
   "repository": {
