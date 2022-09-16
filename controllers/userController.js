@@ -19,7 +19,7 @@ const getUser = (req, res, next) => {
       else res.send(new UserAPIModel(user));
     })
     .catch((err) => {
-      if (err instanceof MongooseError.CastError) next(new NotFoundError(`Пользователь по указанному id ${userId} не найден`));
+      if (err instanceof MongooseError.CastError) next(new BadRequestError(`Некорректный формат id ${userId} пользователя`));
       else next(err);
     });
 };

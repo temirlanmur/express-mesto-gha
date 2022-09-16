@@ -32,7 +32,7 @@ const deleteCard = (req, res, next) => {
       else res.send(new DocumentDeleteAPIModel('Пост удален'));
     })
     .catch((err) => {
-      if (err instanceof MongooseError.CastError) next(new NotFoundError(`Карточка с указанным id ${cardId} не найдена`));
+      if (err instanceof MongooseError.CastError) next(new BadRequestError(`Некорректный формат id ${cardId} карточки`));
       else next(err);
     });
 };
@@ -52,7 +52,7 @@ const likeCard = (req, res, next) => {
       else res.send(new CardAPIModel(card));
     })
     .catch((err) => {
-      if (err instanceof MongooseError.CastError) next(new NotFoundError(`Передан несуществующий id ${cardId} карточки`));
+      if (err instanceof MongooseError.CastError) next(new BadRequestError(`Некорректный формат id ${cardId} карточки`));
       else if (err instanceof MongooseError.ValidationError) next(new BadRequestError('Переданы некорректные данные для постановки лайка'));
       else next(err);
     });
@@ -73,7 +73,7 @@ const dislikeCard = (req, res, next) => {
       else res.send(new CardAPIModel(card));
     })
     .catch((err) => {
-      if (err instanceof MongooseError.CastError) next(new NotFoundError(`Передан несуществующий id ${cardId} карточки`));
+      if (err instanceof MongooseError.CastError) next(new BadRequestError(`Некорректный формат id ${cardId} карточки`));
       else if (err instanceof MongooseError.ValidationError) next(new BadRequestError('Переданы некорректные данные для снятия лайка'));
       else next(err);
     });
