@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const useMainRouter = require('./routes');
 const authorization = require('./utils/authorization');
 const errorHandler = require('./utils/errorHandler');
+const notFoundHandler = require('./utils/notFoundHandler');
 
 const { PORT = 3000 } = process.env;
 
@@ -19,6 +20,7 @@ app.use(authorization);
 useMainRouter(app);
 
 app.use(errorHandler);
+app.use(notFoundHandler);
 
 app.listen(PORT, () => {
   /* eslint-disable-next-line no-console */
