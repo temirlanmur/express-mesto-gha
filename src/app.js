@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const morgan = require('morgan');
 const useMainRouter = require('./routes');
 const authorization = require('./utils/authorization');
 const errorHandler = require('./utils/errorHandler');
@@ -16,6 +17,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(authorization);
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 
 useMainRouter(app);
 
