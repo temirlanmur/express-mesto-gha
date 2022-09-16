@@ -1,8 +1,7 @@
+const MongooseError = require('mongoose').Error;
 const User = require('../models/userModel');
-const UserAPIModel = require('../utils/APIModels/UserAPIModel');
-const ErrorAPIModel = require('../utils/APIModels/ErrorAPIModel');
-const MONGOOSE_ERROR_NAMES = require('../constants/mongooseErrorNames');
-const HTTP_STATUS_CODES = require('../constants/httpStatusCodes');
+const { UserAPIModel } = require('../utils/APIModels');
+const { BadRequestError, NotFoundError } = require('../utils/errors');
 
 const getUsers = (req, res, next) => {
   User
@@ -16,16 +15,12 @@ const getUser = (req, res, next) => {
   User
     .findById(userId)
     .then((user) => {
-      if (user === null) return res.status(HTTP_STATUS_CODES.NOT_FOUND).send(new ErrorAPIModel(`Пользователь по указанному id ${userId} не найден`));
-      return res.send(new UserAPIModel(user));
+      if (user === null) next(new NotFoundError(`Пользователь по указанному id ${userId} не найден`));
+      else res.send(new UserAPIModel(user));
     })
     .catch((err) => {
-      switch (err.name) {
-        case MONGOOSE_ERROR_NAMES.CAST_ERROR:
-          return res.status(HTTP_STATUS_CODES.NOT_FOUND).send(new ErrorAPIModel(`Пользователь по указанному id ${userId} не найден`));
-        default:
-          return next(err);
-      }
+      if (err instanceof MongooseError.CastError) next(new NotFoundError(`Пользователь по указанному id ${userId} не найден`));
+      else next(err);
     });
 };
 
@@ -33,14 +28,10 @@ const createUser = (req, res, next) => {
   const { name, about, avatar } = req.body;
   User
     .create({ name, about, avatar })
-    .then((user) => res.status(HTTP_STATUS_CODES.CREATED).send(new UserAPIModel(user)))
+    .then((user) => res.status(201).send(new UserAPIModel(user)))
     .catch((err) => {
-      switch (err.name) {
-        case MONGOOSE_ERROR_NAMES.VALIDATION_ERROR:
-          return res.status(HTTP_STATUS_CODES.BAD_REQUEST).send(new ErrorAPIModel('Переданы некорректные данные при создании пользователя'));
-        default:
-          return next(err);
-      }
+      if (err instanceof MongooseError.ValidationError) next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+      else next(err);
     });
 };
 
@@ -58,18 +49,13 @@ const updateUser = (req, res, next) => {
       },
     )
     .then((user) => {
-      if (user === null) return res.status(HTTP_STATUS_CODES.NOT_FOUND).send(new ErrorAPIModel(`Пользователь с указанным id ${userId} не найден`));
-      return res.send(new UserAPIModel(user));
+      if (user === null) next(new NotFoundError(`Пользователь с указанным id ${userId} не найден`));
+      else res.send(new UserAPIModel(user));
     })
     .catch((err) => {
-      switch (err.name) {
-        case MONGOOSE_ERROR_NAMES.CAST_ERROR:
-          return res.status(HTTP_STATUS_CODES.NOT_FOUND).send(new ErrorAPIModel(`Пользователь с указанным id ${userId} не найден`));
-        case MONGOOSE_ERROR_NAMES.VALIDATION_ERROR:
-          return res.status(HTTP_STATUS_CODES.BAD_REQUEST).send(new ErrorAPIModel('Переданы некорректные данные при обновлении профиля'));
-        default:
-          return next(err);
-      }
+      if (err instanceof MongooseError.CastError) next(new NotFoundError(`Пользователь с указанным id ${userId} не найден`));
+      else if (err instanceof MongooseError.ValidationError) next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+      else next(err);
     });
 };
 
@@ -87,18 +73,13 @@ const updateUserAvatar = (req, res, next) => {
       },
     )
     .then((user) => {
-      if (user === null) return res.status(HTTP_STATUS_CODES.NOT_FOUND).send(new ErrorAPIModel(`Пользователь с указанным id ${userId} не найден`));
-      return res.send(new UserAPIModel(user));
+      if (user === null) next(new NotFoundError(`Пользователь с указанным id ${userId} не найден`));
+      else res.send(new UserAPIModel(user));
     })
     .catch((err) => {
-      switch (err.name) {
-        case MONGOOSE_ERROR_NAMES.CAST_ERROR:
-          return res.status(HTTP_STATUS_CODES.NOT_FOUND).send(new ErrorAPIModel(`Пользователь с указанным id ${userId} не найден`));
-        case MONGOOSE_ERROR_NAMES.VALIDATION_ERROR:
-          return res.status(HTTP_STATUS_CODES.BAD_REQUEST).send(new ErrorAPIModel('Переданы некорректные данные при обновлении профиля'));
-        default:
-          return next(err);
-      }
+      if (err instanceof MongooseError.CastError) next(new NotFoundError(`Пользователь с указанным id ${userId} не найден`));
+      else if (err instanceof MongooseError.ValidationError) next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+      else next(err);
     });
 };
 
