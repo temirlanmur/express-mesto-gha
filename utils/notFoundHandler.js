@@ -1,6 +1,5 @@
-const { ErrorAPIModel } = require('./APIModels');
+const { NotFoundError } = require('./errors');
 
-// eslint-disable-next-line no-unused-vars
-const notFoundHandler = (req, res, next) => res.status(404).send(new ErrorAPIModel('Ресурса по такому адресу не существует'));
+const notFoundHandler = (req, res, next) => next(new NotFoundError('Ресурса по такому адресу не существует'));
 
 module.exports = notFoundHandler;
