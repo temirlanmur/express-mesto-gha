@@ -1,4 +1,5 @@
 const MongooseError = require('mongoose').Error;
+const bcrypt = require('bcryptjs');
 const User = require('../models/userModel');
 const { UserAPIModel } = require('../utils/APIModels');
 const { BadRequestError, NotFoundError } = require('../utils/errors');
@@ -29,10 +30,15 @@ async function getUser(req, res, next) {
 }
 
 async function createUser(req, res, next) {
-  const { name, about, avatar } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
   try {
-    const user = await User.create({ name, about, avatar });
+    const hash = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      name, about, avatar, email, password: hash,
+    });
 
     res.status(201).send(new UserAPIModel(user));
   } catch (err) {
