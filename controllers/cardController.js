@@ -3,81 +3,84 @@ const Card = require('../models/cardModel');
 const { CardAPIModel, DocumentDeleteAPIModel } = require('../utils/APIModels');
 const { BadRequestError, NotFoundError } = require('../utils/errors');
 
-const getCards = (req, res, next) => {
-  Card
-    .find({})
-    .then((cards) => res.send(cards.map((card) => new CardAPIModel(card))))
-    .catch(next);
-};
+async function getCards(req, res, next) {
+  try {
+    const cards = await Card.find({});
 
-const createCard = (req, res, next) => {
+    res.send(cards.map((card) => new CardAPIModel(card)));
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function createCard(req, res, next) {
   const { name, link } = req.body;
   const ownerId = req.user._id;
 
-  Card
-    .create({ name, link, owner: ownerId })
-    .then((card) => res.status(201).send(new CardAPIModel(card)))
-    .catch((err) => {
-      if (err instanceof MongooseError.ValidationError) next(new BadRequestError('Переданы некорректные данные при создании карточки'));
-      else next(err);
-    });
-};
+  try {
+    const card = await Card.create({ name, link, owner: ownerId });
 
-const deleteCard = (req, res, next) => {
+    res.status(201).send(new CardAPIModel(card));
+  } catch (err) {
+    if (err instanceof MongooseError.ValidationError) next(new BadRequestError('Переданы некорректные данные при создании карточки'));
+    else next(err);
+  }
+}
+
+async function deleteCard(req, res, next) {
   const { cardId } = req.params;
-  Card
-    .findByIdAndRemove(cardId)
-    .then((card) => {
-      if (card === null) next(new NotFoundError(`Карточка с указанным id ${cardId} не найдена`));
-      else res.send(new DocumentDeleteAPIModel('Пост удален'));
-    })
-    .catch((err) => {
-      if (err instanceof MongooseError.CastError) next(new BadRequestError(`Некорректный формат id ${cardId} карточки`));
-      else next(err);
-    });
-};
 
-const likeCard = (req, res, next) => {
+  try {
+    const card = await Card.findByIdAndRemove(cardId);
+
+    if (!card) throw new NotFoundError(`Карточка с указанным id ${cardId} не найдена`);
+
+    res.send(new DocumentDeleteAPIModel('Пост удален'));
+  } catch (err) {
+    if (err instanceof MongooseError.CastError) next(new BadRequestError(`Некорректный формат id ${cardId} карточки`));
+    else next(err);
+  }
+}
+
+async function likeCard(req, res, next) {
   const { cardId } = req.params;
   const userId = req.user._id;
 
-  Card
-    .findByIdAndUpdate(
+  try {
+    const card = await Card.findByIdAndUpdate(
       cardId,
       { $addToSet: { likes: userId } },
       { new: true },
-    )
-    .then((card) => {
-      if (card === null) next(new NotFoundError(`Передан несуществующий id ${cardId} карточки`));
-      else res.send(new CardAPIModel(card));
-    })
-    .catch((err) => {
-      if (err instanceof MongooseError.CastError) next(new BadRequestError(`Некорректный формат id ${cardId} карточки`));
-      else if (err instanceof MongooseError.ValidationError) next(new BadRequestError('Переданы некорректные данные для постановки лайка'));
-      else next(err);
-    });
-};
+    );
 
-const dislikeCard = (req, res, next) => {
+    if (!card) throw new NotFoundError(`Передан несуществующий id ${cardId} карточки`);
+
+    res.send(new CardAPIModel(card));
+  } catch (err) {
+    if (err instanceof MongooseError.CastError) next(new BadRequestError(`Некорректный формат id ${cardId} карточки`));
+    else next(err);
+  }
+}
+
+async function dislikeCard(req, res, next) {
   const { cardId } = req.params;
   const userId = req.user._id;
 
-  Card
-    .findByIdAndUpdate(
+  try {
+    const card = await Card.findByIdAndUpdate(
       cardId,
       { $pull: { likes: userId } },
       { new: true },
-    )
-    .then((card) => {
-      if (card === null) next(new NotFoundError(`Передан несуществующий id ${cardId} карточки`));
-      else res.send(new CardAPIModel(card));
-    })
-    .catch((err) => {
-      if (err instanceof MongooseError.CastError) next(new BadRequestError(`Некорректный формат id ${cardId} карточки`));
-      else if (err instanceof MongooseError.ValidationError) next(new BadRequestError('Переданы некорректные данные для снятия лайка'));
-      else next(err);
-    });
-};
+    );
+
+    if (!card) throw new NotFoundError(`Передан несуществующий id ${cardId} карточки`);
+
+    res.send(new CardAPIModel(card));
+  } catch (err) {
+    if (err instanceof MongooseError.CastError) next(new BadRequestError(`Некорректный формат id ${cardId} карточки`));
+    else next(err);
+  }
+}
 
 module.exports = {
   getCards,
