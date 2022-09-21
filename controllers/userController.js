@@ -1,8 +1,26 @@
 const MongooseError = require('mongoose').Error;
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const { UserAPIModel } = require('../utils/APIModels');
 const { BadRequestError, NotFoundError } = require('../utils/errors');
+
+async function login(req, res, next) {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findUserByCredentials(email, password);
+    const token = jwt.sign(
+      { _id: user._id },
+      'some-key',
+      { expiresIn: '7d' },
+    );
+
+    res.send({ token });
+  } catch (err) {
+    next(err);
+  }
+}
 
 async function getUsers(req, res, next) {
   try {
@@ -96,6 +114,7 @@ async function updateUserAvatar(req, res, next) {
 }
 
 module.exports = {
+  login,
   getUser,
   getUsers,
   createUser,
