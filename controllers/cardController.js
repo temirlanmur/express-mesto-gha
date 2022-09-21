@@ -1,7 +1,7 @@
 const MongooseError = require('mongoose').Error;
 const Card = require('../models/cardModel');
 const { CardAPIModel, DocumentDeleteAPIModel } = require('../utils/APIModels');
-const { BadRequestError, NotFoundError } = require('../utils/errors');
+const { BadRequestError, ForbiddenError, NotFoundError } = require('../utils/errors');
 
 async function getCards(req, res, next) {
   try {
@@ -29,11 +29,14 @@ async function createCard(req, res, next) {
 
 async function deleteCard(req, res, next) {
   const { cardId } = req.params;
+  const userId = req.user._id;
 
   try {
-    const card = await Card.findByIdAndRemove(cardId);
+    // const card = await Card.findByIdAndRemove(cardId);
+    const card = await Card.findById(cardId);
 
     if (!card) throw new NotFoundError(`Карточка с указанным id ${cardId} не найдена`);
+    if (card.owner !== userId) throw new ForbiddenError('Недостаточно прав');
 
     res.send(new DocumentDeleteAPIModel('Пост удален'));
   } catch (err) {
