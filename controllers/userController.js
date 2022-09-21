@@ -65,7 +65,22 @@ async function createUser(req, res, next) {
   }
 }
 
-async function updateUser(req, res, next) {
+async function getProfile(req, res, next) {
+  const userId = req.user._id;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) throw new BadRequestError('Информация не найдена');
+
+    res.send(new UserAPIModel(user));
+  } catch (err) {
+    if (err instanceof MongooseError.CastError) next(new BadRequestError('Информация не найдена'));
+    else next(err);
+  }
+}
+
+async function updateProfile(req, res, next) {
   const { name, about } = req.body;
   const userId = req.user._id;
 
@@ -89,7 +104,7 @@ async function updateUser(req, res, next) {
   }
 }
 
-async function updateUserAvatar(req, res, next) {
+async function updateProfileAvatar(req, res, next) {
   const { avatar } = req.body;
   const userId = req.user._id;
 
@@ -118,6 +133,7 @@ module.exports = {
   getUser,
   getUsers,
   createUser,
-  updateUser,
-  updateUserAvatar,
+  getProfile,
+  updateProfile,
+  updateProfileAvatar,
 };
