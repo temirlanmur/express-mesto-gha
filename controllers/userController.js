@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const { UserAPIModel } = require('../utils/APIModels');
-const { BadRequestError, NotFoundError } = require('../utils/errors');
+const { BadRequestError, NotFoundError, ConflictError } = require('../utils/errors');
 
 async function login(req, res, next) {
   const { email, password } = req.body;
@@ -61,6 +61,7 @@ async function createUser(req, res, next) {
     res.status(201).send(new UserAPIModel(user));
   } catch (err) {
     if (err instanceof MongooseError.ValidationError) next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+    else if (err.code === 11000) next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
     else next(err);
   }
 }
