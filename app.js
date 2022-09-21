@@ -4,8 +4,8 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const useMainRouter = require('./routes');
 // const authorization = require('./utils/authorization');
-const errorHandler = require('./utils/errorHandler');
-const notFoundHandler = require('./utils/notFoundHandler');
+const errorHandler = require('./middlewares/errorHandler');
+const notFoundHandler = require('./middlewares/notFoundHandler');
 
 const { PORT = 3000 } = process.env;
 

@@ -1,5 +1,5 @@
-const { HttpError } = require('./errors');
-const { ErrorAPIModel } = require('./APIModels');
+const { HttpError } = require('../utils/errors');
+const { ErrorAPIModel } = require('../utils/APIModels');
 
 const errorHandler = (err, req, res, next) => {
   if (res.headersSent) {
