@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -6,7 +8,7 @@ const useMainRouter = require('./routes');
 const errorHandler = require('./middlewares/errorHandler');
 const notFoundHandler = require('./middlewares/notFoundHandler');
 
-const { PORT = 3000 } = process.env;
+const { NODE_ENV, PORT = 3000 } = process.env;
 
 const app = express();
 
@@ -15,7 +17,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
+const morganFormat = NODE_ENV === 'production' ? 'common' : 'dev';
+app.use(morgan(morganFormat));
 
 useMainRouter(app);
 
@@ -24,5 +27,7 @@ app.use(errorHandler);
 
 app.listen(PORT, () => {
   /* eslint-disable-next-line no-console */
-  console.log(`App listening on port ${PORT}`);
+  console.log(
+    `WARNING! App has been launched in ${NODE_ENV.toUpperCase()} mode\nIt is listening to the port ${PORT}`,
+  );
 });
