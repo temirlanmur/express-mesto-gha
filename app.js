@@ -11,7 +11,7 @@ const useMainRouter = require('./routes');
 const errorHandler = require('./middlewares/errorHandler');
 const notFoundHandler = require('./middlewares/notFoundHandler');
 
-const { NODE_ENV, PORT = 3000 } = process.env;
+const { NODE_ENV = 'development', PORT = 3000 } = process.env;
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,

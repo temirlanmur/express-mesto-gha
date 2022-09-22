@@ -5,7 +5,7 @@ const { User } = require('../models/userModel');
 const { UserAPIModel } = require('../utils/APIModels');
 const { BadRequestError, NotFoundError, ConflictError } = require('../utils/errors');
 
-const { JWT_SECRET, NODE_ENV } = process.env;
+const { JWT_SECRET, NODE_ENV = 'development' } = process.env;
 
 const isDevelopment = NODE_ENV === 'development';
 
