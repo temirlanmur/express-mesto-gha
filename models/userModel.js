@@ -3,6 +3,14 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const { UnauthorizedError } = require('../utils/errors');
 
+const userSchemaConstants = {
+  nameMinLength: 2,
+  nameMaxLength: 30,
+  aboutMinLength: 2,
+  aboutMaxLength: 30,
+  passwordMinLength: 8,
+};
+
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -21,14 +29,14 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     default: 'Жак-Ив Кусто',
-    minlength: 2,
-    maxlength: 30,
+    minlength: userSchemaConstants.nameMinLength,
+    maxlength: userSchemaConstants.nameMaxLength,
   },
   about: {
     type: String,
     default: 'Исследователь',
-    minlength: 2,
-    maxlength: 30,
+    minlength: userSchemaConstants.aboutMinLength,
+    maxlength: userSchemaConstants.aboutMaxLength,
   },
   avatar: {
     type: String,
@@ -56,4 +64,6 @@ userSchema.statics.findUserByCredentials = function (email, password) {
     });
 };
 
-module.exports = mongoose.model('user', userSchema);
+const User = mongoose.model('user', userSchema);
+
+module.exports = { User, userSchemaConstants };

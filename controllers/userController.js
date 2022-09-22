@@ -1,7 +1,7 @@
 const MongooseError = require('mongoose').Error;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/userModel');
+const { User } = require('../models/userModel');
 const { UserAPIModel } = require('../utils/APIModels');
 const { BadRequestError, NotFoundError, ConflictError } = require('../utils/errors');
 

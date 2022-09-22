@@ -1,5 +1,5 @@
 const MongooseError = require('mongoose').Error;
-const Card = require('../models/cardModel');
+const { Card } = require('../models/cardModel');
 const { CardAPIModel, DocumentDeleteAPIModel } = require('../utils/APIModels');
 const { BadRequestError, ForbiddenError, NotFoundError } = require('../utils/errors');
 
