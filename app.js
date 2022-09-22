@@ -2,6 +2,8 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
@@ -11,9 +13,17 @@ const notFoundHandler = require('./middlewares/notFoundHandler');
 
 const { NODE_ENV, PORT = 3000 } = process.env;
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
+
 const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
+
+app.use(helmet());
+app.use(limiter);
 
 app.use(cookieParser());
 app.use(bodyParser.json());
