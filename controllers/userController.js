@@ -5,6 +5,10 @@ const { User } = require('../models/userModel');
 const { UserAPIModel } = require('../utils/APIModels');
 const { BadRequestError, NotFoundError, ConflictError } = require('../utils/errors');
 
+const { JWT_SECRET, NODE_ENV } = process.env;
+
+const isDevelopment = NODE_ENV === 'development';
+
 async function login(req, res, next) {
   const { email, password } = req.body;
 
@@ -12,11 +16,21 @@ async function login(req, res, next) {
     const user = await User.findUserByCredentials(email, password);
     const token = jwt.sign(
       { _id: user._id },
-      'some-key',
+      isDevelopment ? 'dev-secret' : JWT_SECRET,
       { expiresIn: '7d' },
     );
 
-    res.send({ token });
+    if (isDevelopment) {
+      res.send({ token });
+    } else {
+      res
+        .cookie('jwt', token, {
+          maxAge: 86400 * 7,
+          httpOnly: true,
+          sameSite: true,
+        })
+        .end();
+    }
   } catch (err) {
     next(err);
   }

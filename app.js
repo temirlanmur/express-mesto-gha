@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const useMainRouter = require('./routes');
@@ -14,10 +15,11 @@ const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const morganFormat = NODE_ENV === 'production' ? 'common' : 'dev';
+const morganFormat = NODE_ENV === 'development' ? 'dev' : 'common';
 app.use(morgan(morganFormat));
 
 useMainRouter(app);
