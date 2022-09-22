@@ -42,7 +42,7 @@ async function getUser(req, res, next) {
 
     res.send(new UserAPIModel(user));
   } catch (err) {
-    if (err instanceof MongooseError.CastError) next(new BadRequestError(`Некорректный формат id ${userId} пользователя`));
+    if (err instanceof MongooseError.CastError) next(new BadRequestError(`Передан некорректный формат id ${userId} пользователя`));
     else next(err);
   }
 }
@@ -95,11 +95,11 @@ async function updateProfile(req, res, next) {
       },
     );
 
-    if (!user) throw new NotFoundError(`Пользователь с указанным id ${userId} не найден`);
+    if (!user) throw new NotFoundError(`Пользователь по указанному id ${userId} не найден`);
 
     res.send(new UserAPIModel(user));
   } catch (err) {
-    if (err instanceof MongooseError.CastError) next(new NotFoundError(`Пользователь с указанным id ${userId} не найден`));
+    if (err instanceof MongooseError.CastError) next(new BadRequestError(`Передан некорректный формат id ${userId} пользователя`));
     else if (err instanceof MongooseError.ValidationError) next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
     else next(err);
   }
@@ -119,11 +119,11 @@ async function updateProfileAvatar(req, res, next) {
       },
     );
 
-    if (!user) throw new NotFoundError(`Пользователь с указанным id ${userId} не найден`);
+    if (!user) throw new NotFoundError(`Пользователь по указанному id ${userId} не найден`);
 
     res.send(new UserAPIModel(user));
   } catch (err) {
-    if (err instanceof MongooseError.CastError) next(new NotFoundError(`Пользователь с указанным id ${userId} не найден`));
+    if (err instanceof MongooseError.CastError) next(new BadRequestError(`Передан некорректный формат id ${userId} пользователя`));
     else if (err instanceof MongooseError.ValidationError) next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
     else next(err);
   }

@@ -35,12 +35,12 @@ async function deleteCard(req, res, next) {
     // const card = await Card.findByIdAndRemove(cardId);
     const card = await Card.findById(cardId);
 
-    if (!card) throw new NotFoundError(`Карточка с указанным id ${cardId} не найдена`);
-    if (card.owner !== userId) throw new ForbiddenError('Недостаточно прав');
+    if (!card) throw new NotFoundError(`Передан несуществующий id ${cardId} карточки`);
+    if (card.owner !== userId) throw new ForbiddenError('Недостаточно прав для удаления карточки');
 
-    res.send(new DocumentDeleteAPIModel('Пост удален'));
+    res.send(new DocumentDeleteAPIModel('Карточка удалена'));
   } catch (err) {
-    if (err instanceof MongooseError.CastError) next(new BadRequestError(`Некорректный формат id ${cardId} карточки`));
+    if (err instanceof MongooseError.CastError) next(new BadRequestError(`Передан некорректный формат id ${cardId} карточки`));
     else next(err);
   }
 }
@@ -60,7 +60,7 @@ async function likeCard(req, res, next) {
 
     res.send(new CardAPIModel(card));
   } catch (err) {
-    if (err instanceof MongooseError.CastError) next(new BadRequestError(`Некорректный формат id ${cardId} карточки`));
+    if (err instanceof MongooseError.CastError) next(new BadRequestError(`Передан некорректный формат id ${cardId} карточки`));
     else next(err);
   }
 }
@@ -80,7 +80,7 @@ async function dislikeCard(req, res, next) {
 
     res.send(new CardAPIModel(card));
   } catch (err) {
-    if (err instanceof MongooseError.CastError) next(new BadRequestError(`Некорректный формат id ${cardId} карточки`));
+    if (err instanceof MongooseError.CastError) next(new BadRequestError(`Передан некорректный формат id ${cardId} карточки`));
     else next(err);
   }
 }
