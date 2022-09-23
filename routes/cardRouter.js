@@ -7,30 +7,23 @@ const {
   likeCard,
   dislikeCard,
 } = require('../controllers/cardController');
-const { cardSchemaConstants } = require('../models/cardModel');
+const { cardSchemas, commonSchemas } = require('../utils/validation');
 
-// Declare some repeating model schemas for Joi validation
-// See: https://joi.dev/ & https://github.com/arb/celebrate
-const cardIdSchema = Joi.string().alphanum().length(24);
-
-// Define routes
 cardRouter.get('/', getCards);
 cardRouter.post('/', celebrate({
   [Segments.BODY]: Joi.object().keys({
-    name: Joi.string()
-      .min(cardSchemaConstants.nameMinLength)
-      .max(cardSchemaConstants.nameMaxLength),
-    link: Joi.string().uri(),
+    name: cardSchemas.name,
+    link: commonSchemas.url,
   }),
 }), createCard);
 cardRouter.delete('/:cardId', celebrate({
-  [Segments.PARAMS]: Joi.object().keys({ cardId: cardIdSchema }),
+  [Segments.PARAMS]: Joi.object().keys({ cardId: commonSchemas.id }),
 }), deleteCard);
 cardRouter.put('/:cardId/likes', celebrate({
-  [Segments.PARAMS]: Joi.object().keys({ cardId: cardIdSchema }),
+  [Segments.PARAMS]: Joi.object().keys({ cardId: commonSchemas.id }),
 }), likeCard);
 cardRouter.delete('/:cardId/likes', celebrate({
-  [Segments.PARAMS]: Joi.object().keys({ cardId: cardIdSchema }),
+  [Segments.PARAMS]: Joi.object().keys({ cardId: commonSchemas.id }),
 }), dislikeCard);
 
 module.exports = cardRouter;
