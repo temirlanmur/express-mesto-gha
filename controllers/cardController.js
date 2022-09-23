@@ -36,8 +36,9 @@ async function deleteCard(req, res, next) {
     const card = await Card.findById(cardId);
 
     if (!card) throw new NotFoundError(`Передан несуществующий id ${cardId} карточки`);
-    if (card.owner !== userId) throw new ForbiddenError('Недостаточно прав для удаления карточки');
+    if (card.owner.toString() !== userId) throw new ForbiddenError('Недостаточно прав для удаления карточки');
 
+    await Card.findByIdAndRemove(cardId);
     res.send(new DocumentDeleteAPIModel('Карточка удалена'));
   } catch (err) {
     if (err instanceof MongooseError.CastError) next(new BadRequestError(`Передан некорректный формат id ${cardId} карточки`));
