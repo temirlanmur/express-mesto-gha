@@ -8,8 +8,8 @@ const userSchemas = {
   about: Joi.string()
     .min(userSchemaConstants.aboutMinLength)
     .max(userSchemaConstants.aboutMaxLength),
-  email: Joi.string().uri(),
-  password: Joi.string().min(userSchemaConstants.passwordMinLength),
+  email: Joi.string().email().required,
+  password: Joi.string().min(userSchemaConstants.passwordMinLength).required(),
 };
 
 module.exports = userSchemas;
