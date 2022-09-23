@@ -12,8 +12,8 @@ const { cardSchemas, commonSchemas } = require('../utils/validation');
 cardRouter.get('/', getCards);
 cardRouter.post('/', celebrate({
   [Segments.BODY]: Joi.object().keys({
-    name: cardSchemas.name,
-    link: commonSchemas.url,
+    name: cardSchemas.name.required(),
+    link: commonSchemas.url.required(),
   }),
 }), createCard);
 cardRouter.delete('/:cardId', celebrate({
