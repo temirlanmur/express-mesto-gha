@@ -9,7 +9,7 @@ const userSchemas = {
     .min(userSchemaConstants.aboutMinLength)
     .max(userSchemaConstants.aboutMaxLength),
   email: Joi.string().email().required(),
-  password: Joi.string().min(userSchemaConstants.passwordMinLength).required(),
+  password: Joi.string().required(),
 };
 
 module.exports = userSchemas;

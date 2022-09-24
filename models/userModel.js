@@ -8,7 +8,6 @@ const userSchemaConstants = {
   nameMaxLength: 30,
   aboutMinLength: 2,
   aboutMaxLength: 30,
-  passwordMinLength: 8,
 };
 
 const userSchema = new mongoose.Schema({
