@@ -3,7 +3,6 @@ const { celebrate, Joi, Segments } = require('celebrate');
 const {
   getUser,
   getUsers,
-  createUser,
   getProfile,
   updateProfile,
   updateProfileAvatar,
@@ -27,14 +26,5 @@ userRouter.get('/:userId', celebrate({
     userId: commonSchemas.id,
   }),
 }), getUser);
-userRouter.post('/', celebrate({
-  [Segments.BODY]: Joi.object().keys({
-    name: userSchemas.name,
-    about: userSchemas.about,
-    avatar: commonSchemas.url,
-    email: userSchemas.email,
-    password: userSchemas.password,
-  }),
-}), createUser);
 
 module.exports = userRouter;

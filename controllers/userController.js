@@ -86,12 +86,11 @@ async function getProfile(req, res, next) {
   try {
     const user = await User.findById(userId);
 
-    if (!user) throw new BadRequestError('Информация не найдена');
+    if (!user) throw new NotFoundError('Информация не найдена');
 
     res.send(new UserAPIModel(user));
   } catch (err) {
-    if (err instanceof MongooseError.CastError) next(new BadRequestError('Информация не найдена'));
-    else next(err);
+    next(err);
   }
 }
 
@@ -113,8 +112,7 @@ async function updateProfile(req, res, next) {
 
     res.send(new UserAPIModel(user));
   } catch (err) {
-    if (err instanceof MongooseError.CastError) next(new BadRequestError(`Передан некорректный формат id ${userId} пользователя`));
-    else if (err instanceof MongooseError.ValidationError) next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+    if (err instanceof MongooseError.ValidationError) next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
     else next(err);
   }
 }
@@ -137,8 +135,7 @@ async function updateProfileAvatar(req, res, next) {
 
     res.send(new UserAPIModel(user));
   } catch (err) {
-    if (err instanceof MongooseError.CastError) next(new BadRequestError(`Передан некорректный формат id ${userId} пользователя`));
-    else if (err instanceof MongooseError.ValidationError) next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+    if (err instanceof MongooseError.ValidationError) next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
     else next(err);
   }
 }

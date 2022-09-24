@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const cardSchemaConstants = {
   nameMinLength: 2,
@@ -14,6 +15,10 @@ const cardSchema = new mongoose.Schema({
   },
   link: {
     type: String,
+    validate: {
+      validator: (value) => validator.isURL(value),
+      message: (props) => `${props.value} не является валидным url`,
+    },
     required: true,
   },
   owner: {
